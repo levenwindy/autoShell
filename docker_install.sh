@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # 0.ipv6设置
 mkdir -p /etc/docker
 tee /etc/docker/daemon.json  << EOF
