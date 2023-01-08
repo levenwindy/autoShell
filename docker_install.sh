@@ -11,9 +11,12 @@ tee /etc/docker/daemon.json  << EOF
 EOF
 
 # 安装命令 最简--no-install-recommends
+#alias aptIn='apt --no-install-recommends -y install '
 function aptIn(){
 	apt --no-install-recommends -y install $1
 }
+
+# apt源
 function aptSources(){
 tee  /etc/apt/sources.list  << EOF
 deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
@@ -26,12 +29,13 @@ rm -rf /var/lib/apt/lists/*
 apt-get clean
 apt-get update
 }
+
 # 1.添加GPG密钥
 aptIn apt-transport-https ca-certificates curl gnupg lsb-release
 
 # 如apt失败	
 if [ ! $? -eq 0 ];then
-	echo 'apt安装失败'
+	echo 'apt安装失败 '
 	aptSources
 	aptIn apt-transport-https ca-certificates curl gnupg lsb-release
 fi
@@ -43,13 +47,11 @@ curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt
 apt-get update && aptIn software-properties-common
 
 # 4.添加docker软件源
-
 (echo -e "\r")| add-apt-repository "deb [arch=amd64] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 
-
-
 # 5.更新 apt 软件包缓存，并安装 docker-ce。
-apt update && aptIn docker-ce docker-ce-cli containerd.io
+apt-get update 
+aptIn docker-ce docker-ce-cli containerd.io
 # 重新加载
 systemctl daemon-reload
 systemctl restart docker
