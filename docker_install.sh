@@ -6,18 +6,35 @@ tee /etc/docker/daemon.json  << EOF
   "experimental": true,
   "ipv6": true,
   "ip6tables": true,
-  "fixed-cidr-v6": "2408:8256::/64"
+  "fixed-cidr-v6": "2408::/64"
 }
 EOF
 
-# 安装
+# 安装命令 最简--no-install-recommends
 function aptIn(){
 	apt --no-install-recommends -y install $1
 }
-aptIn expect
-
+function aptSources(){
+tee  /etc/apt/sources.list  << EOF
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-proposed main restricted universe multiverse
+EOF
+rm -rf /var/lib/apt/lists/* 
+apt-get clean
+apt-get update
+}
 # 1.添加GPG密钥
 aptIn apt-transport-https ca-certificates curl gnupg lsb-release
+
+# 如apt失败	
+if [ ! $? -eq 0 ];then
+	echo 'apt安装失败'
+	aptSources
+	aptIn apt-transport-https ca-certificates curl gnupg lsb-release
+fi
 
 # 2.添加gpq
 curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt-key add -
