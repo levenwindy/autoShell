@@ -31,13 +31,13 @@ apt-get update
 }
 
 # 1.添加GPG密钥
-aptIn apt-transport-https ca-certificates curl gnupg lsb-release
+aptIn apt-transport-https ca-certificates gnupg lsb-release
 
 # 如apt失败	
 if [ ! $? -eq 0 ];then
 	echo 'apt安装失败 '
 	aptSources
-	aptIn apt-transport-https ca-certificates curl gnupg lsb-release
+	aptIn apt-transport-https ca-certificates gnupg lsb-release
 fi
 
 # 2.添加gpq
