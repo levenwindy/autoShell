@@ -63,21 +63,20 @@ apt-get clean
 apt-get update
 }
 # 如apt失败	
-
 aptIn apt-transport-https
 if [ ! $? -eq 0 ];then
 	echo 'apt安装失败 '
+	exit 1
 	aptSources
 fi
 
 # 1.添加GPG密钥
 aptIn apt-transport-https ca-certificates gnupg lsb-release
-
-
+echo '添加GPG密钥 '
+exit 1
 
 # 2.添加gpq
 curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt-key add -
-
 # 3.安装ppa仓库
 apt-get update && aptIn software-properties-common
 
@@ -87,32 +86,7 @@ apt-get update && aptIn software-properties-common
 # 5.更新 apt 软件包缓存，并安装 docker-ce。
 apt-get update 
 aptIn docker-ce docker-ce-cli containerd.io
-# 重新加载
-systemctl daemon-reload
-systemctl restart docker
 
-if [ ! $? -eq 0 ];then
-	echo 'apt安装失败 '
-	aptSources
-fi
-
-# 1.添加GPG密钥
-aptIn apt-transport-https ca-certificates gnupg lsb-release
-
-
-
-# 2.添加gpq
-curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt-key add -
-
-# 3.安装ppa仓库
-apt-get update && aptIn software-properties-common
-
-# 4.添加docker软件源
-(echo -e "\r")| add-apt-repository "deb [arch=amd64] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-
-# 5.更新 apt 软件包缓存，并安装 docker-ce。
-apt-get update 
-aptIn docker-ce docker-ce-cli containerd.io
 # 重新加载
 systemctl daemon-reload
 systemctl restart docker
