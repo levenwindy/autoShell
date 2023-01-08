@@ -73,8 +73,6 @@ fi
 
 # 1.添加GPG密钥
 aptIn apt-transport-https ca-certificates gnupg lsb-release
-echo '# 1.添加GPG密钥'
-exit 0
 
 # 2.添加gpq
 curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt-key add -
