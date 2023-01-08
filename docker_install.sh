@@ -16,6 +16,7 @@ function aptIn(){
 	apt --no-install-recommends -y install $1
 }
 
+
 # apt源
 function aptSources(){
 tee  /etc/apt/sources.list  << EOF
@@ -30,6 +31,9 @@ apt-get clean
 apt-get update
 }
 # 如apt失败	
+
+#卸载旧版本docker
+sudo apt-get remove docker docker-engine docker.io containerd runc
 
 #!/usr/bin/env bash
 # 0.ipv6设置
@@ -66,16 +70,19 @@ apt-get update
 aptIn apt-transport-https
 if [ ! $? -eq 0 ];then
 	echo 'apt安装失败 '
-	exit 1
+	sleep 5
 	aptSources
-	aptIn apt-transport-https
 fi
 
 # 1.添加GPG密钥
-aptIn apt-transport-https ca-certificates gnupg lsb-release
+aptIn apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 
 # 2.添加gpq
-curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg |  apt-key add -
+curl -fsSL http://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu/gpg | sudo  apt-key add -
+
+#验证密钥
+apt-key fingerprint 0EBFCD88
+
 # 3.安装ppa仓库
 apt-get update && aptIn software-properties-common
 
